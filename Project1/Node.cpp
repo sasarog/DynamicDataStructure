@@ -15,6 +15,8 @@ public:
 	void addInside(string s, int pos);
 	string getString();
 
+	void deleteElem(int);
+
 };
 //Конструктор по умолчанию
 List::List()
@@ -89,7 +91,7 @@ string List::getString()
 	}
 	//Если есть только головное элемент, возвращаем данные только из него
 	if (this->next == nullptr) {
-		return this->data + ".";
+		return this->data;
 	}
 	//Создаём временный указатель, чтобы ходить по списку
 	shared_ptr<List> tmp = this->next;
@@ -104,7 +106,7 @@ string List::getString()
 		tmp = tmp->next;
 	}
 	//дописываенм хвостовой элемент
-	result += tmp->data + ".";
+	result += tmp->data;
 	//Возвращаем итоговую получившуюся строку
 	return result;
 }
@@ -144,6 +146,69 @@ void List::addInside(string s, int pos)
 		}
 	}
 
+
+}
+/// <summary>
+/// Удаление эд=лемента из списка
+/// </summary>
+/// <param name="chiose">Выбор действия. | 1. Удалить в голове | 0. Удалить в хвосте.| Число - удалить где-то в средине</param>
+void List::deleteElem(int choise)
+{
+	//Если принято число меньше ноля, просто выдаём ошибку
+	if (choise < 0) {
+		throw runtime_error("Ошибка удаления.\nЧисло меньше 0");
+	}
+	//Если не существует ни одного элемента, выдаём ошибку.
+	if (this->data == "") {
+		throw runtime_error("Ошибка удаления.\nОтсутствуют элементы в списке");
+	}
+	//Если элемент только один, удаляем его
+	if (this->next == nullptr) {
+		this->data = "";
+		return;
+	}
+	//Остался только случай, когда элементов несколько
+	switch (choise)
+	{
+		//Удалить в хвосте
+	case 0: {
+		//Создаём временный указатель, 
+		//чтобы перейти к предпоследнему элементу
+		shared_ptr<List> tmp = this->next;
+		//Переходим к предпоследнему элементу
+		while (tmp->next->next != nullptr)
+		{
+			tmp = tmp->next;
+		}
+		//Удаляем указатель на последний элемент
+		tmp->next = nullptr;
+
+	}
+		  break;
+		  //Удалить в голове
+	case 1:
+		//Переписываем в голову данные из правого элемента
+		this->data = this->next->data;
+		this->next = this->next->next;
+
+		break;
+	default:
+		//Создаём копию указателя из головы (на второй элемент)
+		shared_ptr<List> tmp = this->next;
+		//идём циклом до элемента, который нужно удалить
+		for (int i = 2; i < choise && tmp->next != nullptr; i++) {
+			tmp->next = tmp->next->next;
+		}
+		//Если так получилось, что дошли до последнего, удаляем его
+		if (tmp->next == nullptr) {
+			this->deleteElem(0);
+			return;
+		}
+		//Если дошли не до последнего, переписываем указатели так, 
+		//чтобы избавиться от элемента внутри списка 
+		tmp->next = tmp->next->next;
+		break;
+	}
 }
 
 int main() {
@@ -152,8 +217,14 @@ int main() {
 	eva.addToTail("Антон");
 	eva.addToTail("Иван");
 	eva.addToTail("Павел");
-	cout << eva.getString();
 
+	try {
+		eva.deleteElem(2);
+	}
+	catch (exception ex) {
+		cout << ex.what();
+	}
+	cout << eva.getString();
 
 	return 0;
 }
