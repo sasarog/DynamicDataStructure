@@ -65,7 +65,7 @@ void List::addToTail(string s)
 		this->data = s;
 		return;
 	}
-	//Если текущий существует, но следующего нет, записываем туда
+	//Если головной существует, но следующего нет, записываем туда
 	if (this->next == nullptr) {
 		this->next = make_shared<List>(s);
 	}
@@ -110,8 +110,15 @@ void List::addInside(string s, int pos)
 			tmp->next = newElem;
 		}
 		else {
+			//Если пустой, просто добавляем в хвост
 			tmp->next = make_shared<List>(s);
 		}
 	}
 
+}
+
+int main() {
+
+
+	return 0;
 }
