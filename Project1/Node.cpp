@@ -2,7 +2,7 @@
 using namespace std;
 class List {
 	//Указатель на следующий в цепочке элемент
-	shared_ptr<List> next = make_shared<List>();
+	shared_ptr<List> next = nullptr;
 	//Данные, которые ма храним в элементе
 	string data = "";
 
@@ -13,7 +13,7 @@ public:
 	void addToHead(string s);
 	void addToTail(string s);
 	void addInside(string s, int pos);
-
+	string getString();
 
 };
 //Конструктор по умолчанию
@@ -79,8 +79,37 @@ void List::addToTail(string s)
 		//Когда прищли в хвост, добавляем новый элемент
 		tmp->next = make_shared<List>(s);
 	}
-
 }
+string List::getString()
+{
+
+	//Если списка нет, возвращаем устую строку
+	if (this->data == "") {
+		return "";
+	}
+	//Если есть только головное элемент, возвращаем данные только из него
+	if (this->next == nullptr) {
+		return this->data + ".";
+	}
+	//Создаём временный указатель, чтобы ходить по списку
+	shared_ptr<List> tmp = this->next;
+	//Вписываем данные из головного элемента
+	string result = this->data + "\n";
+	//Пока не дойдём до хвоста
+	while (tmp->next != nullptr)
+	{
+		//Добавляем к итоговой строке все данные из каждого элемента
+		result += tmp->data + "\n";
+		//Переходим к следующему элементу
+		tmp = tmp->next;
+	}
+	//дописываенм хвостовой элемент
+	result += tmp->data + ".";
+	//Возвращаем итоговую получившуюся строку
+	return result;
+}
+
+
 //Добавление элемента внутрь списка
 void List::addInside(string s, int pos)
 {
@@ -96,8 +125,8 @@ void List::addInside(string s, int pos)
 		shared_ptr<List> tmp = this->next;
 		//идём по списку до тех пор, пока не дойдём до нужной позиции, или до хвоста
 		for (
-			int i = 0; 
-			i < pos && tmp->next != nullptr; 
+			int i = 0;
+			i < pos && tmp->next != nullptr;
 			i++, tmp = tmp->next
 			);
 		//Если следующий элемент не пустой, добавляем между двумя
@@ -118,6 +147,12 @@ void List::addInside(string s, int pos)
 }
 
 int main() {
+	setlocale(LC_ALL, "Russian");
+	List eva("Ольга");
+	eva.addToTail("Антон");
+	eva.addToTail("Иван");
+	eva.addToTail("Павел");
+	cout << eva.getString();
 
 
 	return 0;
