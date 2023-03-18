@@ -14,6 +14,12 @@ struct TreeElem
 bool operator<(TreeElem a, TreeElem b) {
 	return a.age < b.age;
 }
+bool operator<(int a, shared_ptr<TreeElem> b) {
+	return a < b->age;
+}
+bool operator>(int a, shared_ptr<TreeElem> b) {
+	return a > b->age;
+}
 
 class BinaryTree {
 	shared_ptr<BinaryTree>left;
@@ -39,65 +45,108 @@ BinaryTree::BinaryTree(int value)
 }
 void BinaryTree::add(int value)
 {
+	//Если ни одного элемента нет
 	if (this->data == nullptr) {
+		//То мы создаём корневой
 		this->data = make_shared<TreeElem>(value);
+		//Выходим из функции
 		return;
 	}
-	if (value < this->data->age) {
+
+	//Если добавляемое значение меньше узлового
+	if (value < this->data) {
+		//Идём налево
+		//Если нет левого элемента
 		if (this->left == nullptr) {
+			//Создаём левый и записываем данные
 			this->left = make_shared<BinaryTree>(value);
 		}
+		//Если левый есть
 		else {
+			//Просим его добавить значение в дерево
 			this->left->add(value);
 		}
 	}
+	//Если добавляемое значение больше узлового
 	else {
-		if (value > this->data->age) {
-			if (this->right == nullptr) {
-				this->right = make_shared<BinaryTree>(value);
-			}
-			else {
-				this->right->add(value);
-			}
+		//Если справа нет дочернего элемента
+		if (this->right == nullptr) {
+			//Создаём его и записываем добавляемое значение
+			this->right = make_shared<BinaryTree>(value);
+		}
+		//Если справа уже есть элемент
+		else {
+			//Просим его добавить данные
+			this->right->add(value);
 		}
 	}
 }
 void BinaryTree::remove(int value)
 {
+	//Указатель на родителя
 	shared_ptr<BinaryTree> parent = nullptr;
+	//Указатель на текущий рассматриваемый элемент
 	shared_ptr<BinaryTree> tek = shared_ptr<BinaryTree>(this);
+	//Пока не найдём искомый элемент или не покинем дерево
 	while (tek != nullptr && tek->data->age != value) {
+		//В родителя прописываем указатель на элемент, который был текущим
 		parent = tek;
-		if (value < tek->left->data->age) {
+		//В зависимости от того, искомое значение больше или меньше
+		if (value < tek->left->data) {
+			//Если меньше, идём влево
 			tek = tek->left;
 		}
 		else
 		{
+			//Если больше идём вправо
 			tek = tek->right;
 		}
 	}
-
+	//Если вышли из дерева, то искомого элемента нет
 	if (tek == nullptr) {
+		//Выходим из функции
 		return;
 	}
+	//Проверка на то, что в узле один потомок
+	//Если слева пусто
 	if (tek->left == nullptr) {
+		//Если у родителя мы левый
 		if (parent->left == tek) {
+			//У родителя в левый прописываем наш правый
 			parent->left = tek->right;
 		}
 		else {
+			//У родителя правый прописываем наш правый
 			parent->right = tek->right;
 		}
+		//И выходим
 		return;
 	}
+	//Если справа пусто
 	else {
+		//Если у родителя мы левый
 		if (parent->left == tek) {
+			//У родителя в левый прописываем наш левый
 			parent->left = tek->left;
 		}
 		else {
+			//У родителя правый прописываем наш правый
 			parent->right = tek->left;
 		}
+		//Выходим
 		return;
+
 	}
+	//Удаление, когда у нас два потомка
+	// У элемента есть два потомка, тогда на место элемента поставим
+	// наименьший элемент из его правого поддерева
+	
+	shared_ptr<BinaryTree> replace = tek->right;
+	while (replace->left != nullptr) {
+		replace = replace->left;
+	}
+	tek->data = replace->data;
+	replace->remove(replace->data->age);
 
 
 }
