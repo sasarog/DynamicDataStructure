@@ -132,7 +132,7 @@ void List::addInside(string s, int pos)
 		shared_ptr<List> tmp = this->next;
 		//идём по списку до тех пор, пока не дойдём до нужной позиции, или до хвоста
 		for (
-			int i = 0;
+			int i = 2;
 			i < pos && tmp->next != nullptr;
 			i++, tmp = tmp->next
 			);
@@ -202,7 +202,7 @@ void List::deleteElem(int choise)
 		shared_ptr<List> tmp = this->next;
 		//идём циклом до элемента, который нужно удалить
 		for (int i = 2; i < choise && tmp->next != nullptr; i++) {
-			tmp->next = tmp->next->next;
+			tmp = tmp->next;
 		}
 		//Если так получилось, что дошли до последнего, удаляем его
 		if (tmp->next == nullptr) {
