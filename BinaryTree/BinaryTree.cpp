@@ -107,9 +107,26 @@ void BinaryTree::remove(int value)
 		//Выходим из функции
 		return;
 	}
+	//Удаление листового элемента
+	if (tek->left == nullptr && tek->right == nullptr) {
+		//Если у родителя мы левый
+		if (parent->left == tek) {
+			//У родителя в левый прописываем наш правый
+			parent->left = nullptr;
+		}
+		else {
+			//У родителя правый прописываем наш правый
+			parent->right = nullptr;
+		}
+		//И выходим
+		return;
+	}
+
+
+
 	//Проверка на то, что в узле один потомок
 	//Если слева пусто
-	if (tek->left == nullptr) {
+	if (tek->left == nullptr && tek->right != nullptr) {
 		//Если у родителя мы левый
 		if (parent->left == tek) {
 			//У родителя в левый прописываем наш правый
@@ -123,7 +140,7 @@ void BinaryTree::remove(int value)
 		return;
 	}
 	//Если справа пусто
-	else {
+	if(tek->left != nullptr && tek->right == nullptr) {
 		//Если у родителя мы левый
 		if (parent->left == tek) {
 			//У родителя в левый прописываем наш левый
@@ -146,10 +163,12 @@ void BinaryTree::remove(int value)
 	while (replace->left != nullptr) {
 		replace = replace->left;
 	}
-	//Забираем у самого левого элемента его данные
-	tek->data = replace->data;
+	//Запоминаем у самого левого элемента его данные
+	shared_ptr<TreeElem> tmpData = replace->data;
 	//Удаляем тот самый самый левый элемент
-	replace->remove(replace->data->age);
+	tek->remove(replace->data->age);
+
+	tek->data = tmpData;
 
 
 }
