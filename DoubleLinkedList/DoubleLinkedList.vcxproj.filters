@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HashTable.cpp">
+    <ClCompile Include="DoubleLinkedList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

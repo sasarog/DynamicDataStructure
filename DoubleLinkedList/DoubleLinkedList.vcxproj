@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{38cf9786-2110-44a6-993c-4709841e1d91}</ProjectGuid>
-    <RootNamespace>HashTable</RootNamespace>
+    <ProjectGuid>{31df23e2-bfd5-470b-a8b9-b3bdee08b330}</ProjectGuid>
+    <RootNamespace>DoubleLinkedList</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,7 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="HashTable.cpp" />
+    <ClCompile Include="DoubleLinkedList.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
