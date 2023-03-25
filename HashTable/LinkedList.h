@@ -26,7 +26,7 @@ struct chel {
 			endl;
 	}
 };
-class LinkedList {
+class LinkedList:enable_shared_from_this<LinkedList> {
 	//Указатель на следующий в цепочке элемент
 	shared_ptr<LinkedList> next = nullptr;
 	//Данные, которые ма храним в элементе
@@ -156,12 +156,12 @@ string LinkedList::getString()
 
 inline shared_ptr<chel> LinkedList::find(string name)
 {
-	shared_ptr<LinkedList> tmp = shared_ptr<LinkedList>(this);
+	shared_ptr<LinkedList> tmp = make_shared<LinkedList>(this);
 	while (this->data->fio != name || this->next != nullptr) {
 		tmp = tmp->next;
 	}
 
-	return weak_ptr<chel>( tmp->data);
+	return tmp->data;
 }
 
 
