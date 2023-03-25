@@ -1,45 +1,19 @@
 #include <iostream>
+#include "LinkedList.h"
 using namespace std;
 //Структура, хранящая данные о человеке
-struct chelovek {
-	string fio;
-	int age;
-	int rost;
-	int heart;
-	//Конструктор по умолчанию.
-	chelovek() {
-		this->fio = "";
-		this->age = 0;
-		this->rost = 0;
-		this->heart = 0;
-	};
-	//Конструктор с параметром
-	chelovek(string fio, int age, int rost, int heart) {
-		this->age = age;
-		this->fio = fio;
-		this->rost = rost;
-		this->heart = heart;
-	}
-	//Вывод в консоль одного элемента
-	void print() {
-		cout <<
-			this->fio << " " <<
-			this->age << " " <<
-			this->rost << " " <<
-			this->heart << endl;
-	}
-};
+
 class HashTable {
 	//Размер массива
 	int size;
 	//Указатель на массив
-	shared_ptr<chelovek[]> mas;
+	shared_ptr<LinkedList[]> mas;
 	//Функция по высчитыванию хеш-значения
 	int hashValue(string fio);
 public:
 	HashTable();
 	HashTable(int size);
-	void add(string fio, int age, int rost, int heart);
+	void add(string fio, int age, int rost);
 	void print(string fio);
 	void printAll();
 };
@@ -51,23 +25,21 @@ HashTable::HashTable()
 HashTable::HashTable(int size)
 {
 	this->size = size;
-	this->mas = make_shared<chelovek[]>(size);
+	//this->mas = make_shared<List[]>(new List[size],std::default_delete<List[]>());
+	this->mas = make_shared<LinkedList[]>(size);
 }
-void HashTable::add(string fio, int age, int rost, int heart)
+void HashTable::add(string fio, int age, int rost)
 {
 	//Узнаём, в какой элемент массива записывать необходимое значение
 	int number = hashValue(fio);
 	//Зписываем в элемент массива значения
-	mas[number].age = age;
-	mas[number].fio = fio;
-	mas[number].rost = rost;
-	mas[number].heart = heart;
+	mas[number].addToTail(fio, age, rost);
 
 }
 void HashTable::print(string fio)
 {
 	//Выводим элемент массива, который искали
-	mas[hashValue(fio)].print();
+	mas[hashValue(fio)].find(fio)->print();
 }
 int HashTable::hashValue(string fio)
 {
@@ -99,18 +71,18 @@ void HashTable::printAll()
 	
 	for (int i = 0; i < this->size; i++) {
 		cout << i + 1 << ": ";
-		mas[i].print();
+		
 	}
 }
 int main() {
 	HashTable eva(50);
-	eva.add("Adam", 12, 3652, 4543);
-	eva.add("qwer", 43, 3232, 423);
-	eva.add("asd", 54, 3352, 453);
-	eva.add("xcv", 1652, 3872, 43);
-	eva.add("tyu", 1762, 32, 763);
-	eva.add("Read", 12, 32, 433223);
-	eva.add("Harek", 12, 32, 4231456);
+	eva.add("Adam", 12, 3652);
+	eva.add("qwer", 43, 3232);
+	eva.add("asd", 54, 3352);
+	eva.add("xcv", 1652, 3872);
+	eva.add("tyu", 1762, 32);
+	eva.add("Read", 12, 32);
+	eva.add("Harek", 12, 32);
 	eva.print("Adam");
 	eva.print("Read");
 	eva.printAll();
