@@ -26,7 +26,9 @@ HashTable::HashTable(int size)
 {
 	this->size = size;
 	//this->mas = make_shared<List[]>(new List[size],std::default_delete<List[]>());
-	this->mas = make_shared<LinkedList[]>(size);
+	//this->mas = make_shared<LinkedList[]>(size);
+	//this->mas = make_shared<LinkedList[]>();
+	this->mas = shared_ptr< LinkedList[] >( new LinkedList[size]);
 }
 void HashTable::add(string fio, int age, int rost)
 {

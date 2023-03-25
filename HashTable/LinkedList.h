@@ -34,6 +34,7 @@ class LinkedList {
 
 public:
 	LinkedList();
+	LinkedList(int eva);
 	LinkedList(string s, int age, int rost);
 	LinkedList(shared_ptr<chel> chel);
 	bool isEmpty();
@@ -49,6 +50,10 @@ public:
 LinkedList::LinkedList()
 {
 	this->next = nullptr;
+	this->data = nullptr;
+}
+inline LinkedList::LinkedList(int eva)
+{
 	this->data = nullptr;
 }
 // онструктор с параметром дл€ заполнени€ данными
@@ -156,7 +161,7 @@ inline shared_ptr<chel> LinkedList::find(string name)
 		tmp = tmp->next;
 	}
 
-	return tmp->data;
+	return weak_ptr<chel>( tmp->data);
 }
 
 
