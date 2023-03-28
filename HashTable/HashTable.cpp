@@ -16,6 +16,7 @@ public:
 	void add(string fio, int age, int rost);
 	void print(string fio);
 	void printAll();
+	void remove(string fio);
 };
 HashTable::HashTable()
 {
@@ -58,8 +59,8 @@ int HashTable::hashValue(string fio)
 	//Если выходное значение получилось больше, чем размер массива,
 	//уменьшаем значение выходной переменной до тех пор, пока
 	//значение не станет меньше, чем размер массива
-	while (result > this->size) {
-		result %= 22;
+	while (result >= this->size) {
+		result %= this->size;
 	}
 	//Возвращаем результат
 	return result;
@@ -72,12 +73,17 @@ void HashTable::printAll()
 {
 	
 	for (int i = 0; i < this->size; i++) {
-		cout << i + 1 << ": ";
-		
+		cout << i + 1 << ": \n";
+		mas[i].printAllFromLinkedList();
+		cout << "\n";
 	}
 }
+void HashTable::remove(string fio)
+{
+	mas[hashValue(fio)].deleteElem(fio);
+}
 int main() {
-	HashTable eva(50);
+	HashTable eva(7);
 	eva.add("Adam", 12, 3652);
 	eva.add("qwer", 43, 3232);
 	eva.add("asd", 54, 3352);
@@ -85,7 +91,12 @@ int main() {
 	eva.add("tyu", 1762, 32);
 	eva.add("Read", 12, 32);
 	eva.add("Harek", 12, 32);
+
 	eva.print("Adam");
 	eva.print("Read");
+	eva.printAll();
+	eva.remove("Adam");
+	eva.remove("Read");
+	eva.remove("Read");
 	eva.printAll();
 }

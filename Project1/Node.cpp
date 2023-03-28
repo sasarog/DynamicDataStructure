@@ -225,7 +225,7 @@ int main() {
 		eva.addToTail("Павел");
 
 
-		eva.deleteElem(2);
+		eva.deleteElem(3);
 		cout << eva.getString();
 	}
 	catch (exception ex) {

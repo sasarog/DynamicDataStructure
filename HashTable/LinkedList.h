@@ -26,7 +26,7 @@ struct chel {
 			endl;
 	}
 };
-class LinkedList:enable_shared_from_this<LinkedList> {
+class LinkedList: public enable_shared_from_this<LinkedList> {
 	//Указатель на следующий в цепочке элемент
 	shared_ptr<LinkedList> next = nullptr;
 	//Данные, которые ма храним в элементе
@@ -44,6 +44,8 @@ public:
 	string getString();
 	shared_ptr<chel> find(string name);
 	void deleteElem(int choise);
+	void deleteElem(string name);
+	void printAllFromLinkedList();
 
 };
 //Конструктор по умолчанию
@@ -110,7 +112,7 @@ void LinkedList::addToTail(string s, int age, int rost)
 	}
 	//Если головной существует, но следующего нет, записываем туда
 	if (this->next == nullptr) {
-		this->next = make_shared<LinkedList>(this->data);
+		this->next = make_shared<LinkedList>(make_shared<chel>(s,age,rost));
 	}
 	else {
 		//Если следующие узлы есть, идём по цепочке в самый хвост
@@ -156,11 +158,19 @@ string LinkedList::getString()
 
 inline shared_ptr<chel> LinkedList::find(string name)
 {
-	shared_ptr<LinkedList> tmp = make_shared<LinkedList>(this);
-	while (this->data->fio != name || this->next != nullptr) {
+	if (this->data == nullptr) {
+		throw domain_error("List is empty");
+	}
+	if (this->data->fio == name) {
+		return this->data;
+	}
+	shared_ptr<LinkedList> tmp = this->next;
+	while (tmp->data->fio != name && tmp->next != nullptr) {
 		tmp = tmp->next;
 	}
-
+	if (tmp->data->fio != name) {
+		throw domain_error("Element is not exist");
+	}
 	return tmp->data;
 }
 
@@ -261,5 +271,27 @@ void LinkedList::deleteElem(int choise)
 		//чтобы избавиться от элемента внутри списка 
 		tmp->next = tmp->next->next;
 		break;
+	}
+}
+
+inline void LinkedList::deleteElem(string name)
+{
+	if (this->data == nullptr) {
+		throw runtime_error("Ошибка удаления.\nОтсутствуют элементы в списке");
+	}
+	if (this->data->fio == name) {
+		this->data = this->next == nullptr ? nullptr : this->next->data;
+		this->next = this->next == nullptr ? nullptr : this->next->next;
+	}
+}
+
+inline void LinkedList::printAllFromLinkedList()
+{
+	if (this->data == nullptr) {
+		return;
+	}
+	this->data->print();
+	if (this->next != nullptr) {
+		this->next->printAllFromLinkedList();
 	}
 }
