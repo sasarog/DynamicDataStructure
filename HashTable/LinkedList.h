@@ -277,7 +277,7 @@ void LinkedList::deleteElem(int choise)
 inline void LinkedList::deleteElem(string name)
 {
 	if (this->data == nullptr) {
-		throw runtime_error("Îøèáêà óäàëåíèÿ.\nÎòñóòñòâóşò ıëåìåíòû â ñïèñêå");
+		throw runtime_error("Îøèáêà óäàëåíèÿ: Îòñóòñòâóşò ıëåìåíòû â ñïèñêå\n");
 	}
 	if (this->data->fio == name) {
 		this->data = this->next == nullptr ? nullptr : this->next->data;

@@ -83,20 +83,27 @@ void HashTable::remove(string fio)
 	mas[hashValue(fio)].deleteElem(fio);
 }
 int main() {
+	setlocale(LC_ALL, "Russian");
 	HashTable eva(7);
-	eva.add("Adam", 12, 3652);
-	eva.add("qwer", 43, 3232);
-	eva.add("asd", 54, 3352);
-	eva.add("xcv", 1652, 3872);
-	eva.add("tyu", 1762, 32);
-	eva.add("Read", 12, 32);
-	eva.add("Harek", 12, 32);
+	try {
+		eva.add("Adam", 12, 3652);
+		eva.add("qwer", 43, 3232);
+		eva.add("asd", 54, 3352);
+		eva.add("xcv", 1652, 3872);
+		eva.add("tyu", 1762, 32);
+		eva.add("Read", 12, 32);
+		eva.add("Harek", 12, 32);
 
-	eva.print("Adam");
-	eva.print("Read");
-	eva.printAll();
-	eva.remove("Adam");
-	eva.remove("Read");
-	eva.remove("Read");
-	eva.printAll();
+		eva.print("Adam");
+		eva.print("Read");
+		eva.printAll();
+		eva.remove("Adam");
+		eva.remove("Read");
+		eva.remove("Read");
+		eva.printAll();
+	}
+
+	catch (exception ex) {
+		cerr << ex.what();
+	}
 }
