@@ -23,7 +23,7 @@ bool operator>(int a, shared_ptr<TreeElem> b) {
 	return a > b->age;
 }
 
-class BinaryTree {
+class BinaryTree:public enable_shared_from_this<BinaryTree> {
 	shared_ptr<BinaryTree>left;
 	shared_ptr<BinaryTree>right;
 	shared_ptr<TreeElem> data;
@@ -86,11 +86,18 @@ void BinaryTree::add(int value)
 }
 void BinaryTree::remove(int value)
 {
-	shared_ptr<BinaryTree> kostyl = shared_ptr<BinaryTree>(this);
 	//Указатель на родителя
-	shared_ptr<BinaryTree> parent = shared_ptr<BinaryTree>(this);
+	shared_ptr<BinaryTree> parent = nullptr;
 	//Указатель на текущий рассматриваемый элемент
-	shared_ptr<BinaryTree> tek = shared_ptr<BinaryTree>(this);
+	shared_ptr<BinaryTree> tek = nullptr;
+	//Переделать, нельзя удалить корневой элемент
+	if (value < this->data) {
+		tek = this->left;
+	}
+	else {
+		tek = this->right;
+	}
+
 	//Пока не найдём искомый элемент или не покинем дерево
 	while (tek != nullptr && tek->data->age != value) {
 		//В родителя прописываем указатель на элемент, который был текущим

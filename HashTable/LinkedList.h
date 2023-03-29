@@ -34,7 +34,6 @@ class LinkedList: public enable_shared_from_this<LinkedList> {
 
 public:
 	LinkedList();
-	LinkedList(int eva);
 	LinkedList(string s, int age, int rost);
 	LinkedList(shared_ptr<chel> chel);
 	bool isEmpty();
@@ -54,10 +53,7 @@ LinkedList::LinkedList()
 	this->next = nullptr;
 	this->data = nullptr;
 }
-inline LinkedList::LinkedList(int eva)
-{
-	this->data = nullptr;
-}
+
 // онструктор с параметром дл€ заполнени€ данными
 LinkedList::LinkedList(string s, int age, int rost)
 {
