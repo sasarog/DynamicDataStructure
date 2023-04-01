@@ -1,40 +1,131 @@
 #include <iostream>
 using namespace std;
-class DLList {
-	//Указатель на предыдущий в цепочке элемент
-	shared_ptr<DLList> prev = nullptr;
-	//Указатель на следующий в цепочке элемент
-	shared_ptr<DLList> next = nullptr;
-	//Данные, которые ма храним в элементе
-	shared_ptr<string> data = nullptr;
 
+struct DLLData {
+	DLLData() {
+		cout << "Введите строку  ";
+		cin >> this->s;
+		cout << "Введите число";
+		cin >> this->i;
+	}
+	DLLData(string s, int i) {
+		this->s = s;
+		this->i = i;
+	}
+	DLLData(DLLData& data) {
+		this->i = data.i;
+		this->s = data.s;
+	}
+	string s;
+	int i;
+	void print() {
+		cout << "Строка: " << this->s << endl
+			<< "Число: " << this->i << endl;
+	}
+};
+struct DLLElement {
+	//Указатель на предыдущий в цепочке элемент
+	shared_ptr<DLLElement> prev;
+	//Указатель на следующий в цепочке элемент
+	shared_ptr<DLLElement> next;
+	//Данные, которые ма храним в элементе
+	shared_ptr<DLLData> data;
+	DLLElement() {
+		this->data = make_shared<DLLData>();
+	}
+	DLLElement(string s, int i) {
+		this->data = make_shared<DLLData>(s, i);
+	}
+	DLLElement(
+		shared_ptr<DLLElement> prev,
+		shared_ptr<DLLElement> next
+	) {
+		this->prev = prev;
+		this->next = next;
+		this->data = make_shared<DLLData>();
+	}
+	DLLElement(
+		shared_ptr<DLLElement> prev,
+		shared_ptr<DLLElement> next,
+		string s,
+		int i
+	) {
+		this->prev = prev;
+		this->next = next;
+		this->data = make_shared<DLLData>(s, i);
+	}
+
+};
+class DLList {
+	//Элемент, на который мы ссылаемся из класса
+	shared_ptr<DLLElement> elem;
+	void goToHead();
+	void goToTail();
+	void stepToLeft();
+	void stepToRight();
+	void checkHaveElement();
 public:
 	DLList();
-	DLList(string s);
+	DLList(string s, int i);
 	bool isEmpty();
-	void addToHead(string s);
-	void addToTail(string s);
-	void addInside(string s, int pos);
+	void addToHead(string s, int i);
+	void addToTail(string s, int i);
+	void addInside(string s, int iData, int pos);
 	string getString();
 
 	void deleteElem(int choise);
 
 };
+void DLList::goToHead()
+{
+	this->checkHaveElement();
+	while (this->elem->prev != nullptr)
+	{
+		this->elem = this->elem->prev;
+	}
+}
+void DLList::goToTail()
+{
+	this->checkHaveElement();
+	while (this->elem->next != nullptr) {
+		this->elem = this->elem->next;
+	}
+
+}
+void DLList::stepToLeft()
+{
+	checkHaveElement();
+	if (this->elem->prev != nullptr) {
+		this->elem = this->elem->prev;
+	}
+}
+void DLList::stepToRight()
+{
+	checkHaveElement();
+	if (this->elem->next != nullptr) {
+		this->elem = this->elem->next;
+	}
+}
+void DLList::checkHaveElement()
+{
+	if (this->elem == nullptr) {
+		throw runtime_error("Нет элемента");
+	}
+}
 //Конструктор по умолчанию
 DLList::DLList()
 {
-	this->next = nullptr;
-	this->data = nullptr;
+	this->elem = nullptr;
 }
 //Конструктор с параметром для заполнения данными
-DLList::DLList(string s)
+DLList::DLList(string s, int i)
 {
-	this->data = make_shared<string>(s);
+	this->elem = make_shared<DLLElement>(s, i);
 }
 //Проверка на то, есть ли хоть один элемент
 bool DLList::isEmpty()
 {
-	if (this->data == nullptr) {
+	if (this->elem == nullptr) {
 		return true;
 	}
 	else {
@@ -42,129 +133,63 @@ bool DLList::isEmpty()
 	}
 }
 //Добавление элемента в голову
-void DLList::addToHead(string s)
+void DLList::addToHead(string s, int i)
 {
+	shared_ptr<DLLElement> newElem = make_shared<DLLElement>(s, i);
 	//если ни одного элемента
 	if (this->isEmpty()) {
 		//Записываем данные в текущий
-		this->data = make_shared<string>(s);
+		this->elem = newElem;
 		return;
 	}
-	if (this->next == nullptr) {
-		this->next = make_shared<DLList>(s);
-		this->next->prev = shared_ptr<DLList>(this);
-	}
-	else {
-		//Если текущий существует, запоминаем бывший справа
-		shared_ptr<DLList> tmp = this->next;
-		//создаём новый элемент справа
-		this->next = make_shared<DLList>(*this->data);
-		//в новый справа записываем бывший справа
-		this->next->next = tmp;
-		//В старом, который был вторым, прописываем предыдущий указатель на новй
-		tmp->prev = this->next;
-		//В новом элементе указатель на предыдущий прописываем на головной
-		this->next->prev = shared_ptr<DLList>(this);
-		//В текущий заносим новые данные
-		this->data = make_shared<string>(s);
-	}
+	this->goToHead();
+
+	newElem->next = this->elem;
+	this->elem->prev = newElem;
+	this->goToHead();
 }
 //Добавление элемента в хвост
-void DLList::addToTail(string s)
+void DLList::addToTail(string s, int i)
 {
+	shared_ptr<DLLElement> newElem = make_shared<DLLElement>(s, i);
 	//Если список пустой, помещаем данные прямо в первый элемент
 	if (this->isEmpty()) {
-		this->data = make_shared<string>(s);
+		this->elem = newElem;
 		return;
 	}
-	//Если головной существует, но следующего нет, записываем туда
-	if (this->next == nullptr) {
-		this->next = make_shared<DLList>(s);
-		this->next->prev = shared_ptr<DLList>(this);
-	}
-	else {
-		//Если следующие узлы есть, идём по цепочке в самый хвост
-		shared_ptr<DLList> tmp = this->next;
-		while (tmp->next != nullptr)
-		{
-			tmp = tmp->next;
-		}
-		//Когда прищли в хвост, добавляем новый элемент
-		tmp->next = make_shared<DLList>(s);
-		//В новый элемент пропсываем указатель, который был до этого хвостовым
-		tmp->next->prev = tmp;
-	}
+	this->goToTail();
+	this->elem->next = newElem;
+	newElem->prev = this->elem;
+
+
 }
+// Потом дописать
 string DLList::getString()
 {
 
-	//Если списка нет, возвращаем устую строку
-	if (this->data == nullptr) {
-		return "";
+	this->goToHead();
+	string result = "";
+	while (this->elem->next != nullptr) {
+		result += this->elem->data->s + " ";
+		this->stepToRight();
 	}
-	//Если есть только головной элемент, возвращаем данные только из него
-	if (this->next == nullptr) {
-		return *this->data; 
-	}
-	//Создаём временный указатель, чтобы ходить по списку
-	shared_ptr<DLList> tmp = this->next;
-	//Вписываем данные из головного элемента
-	string result = *this->data + "\n";
-	//Пока не дойдём до хвоста
-	while (tmp->next != nullptr)
-	{
-		//Добавляем к итоговой строке все данные из каждого элемента
-		result += *tmp->data + "\n";
-		//Переходим к следующему элементу
-		tmp = tmp->next;
-	}
-	//дописываенм хвостовой элемент
-	result += *tmp->data;
-	//Возвращаем итоговую получившуюся строку
+	result += this->elem->data->s + " ";
 	return result;
 }
 
 
 //Добавление элемента внутрь списка
-void DLList::addInside(string s, int pos)
+void DLList::addInside(string s, int iData, int pos)
 {
-	//Тут как и в добавлении в хвост
-	if (this->isEmpty()) {
-		this->addToHead(s);
-		return;
+	this->goToHead();
+	for (int i = 1; i <= pos && this->elem->next != nullptr; i) {
+		this->elem = this->elem->next;
 	}
-	if (this->next == nullptr) {
-		this->next = make_shared<DLList>(s);
-		this->next->prev = shared_ptr<DLList>(this);
-	}
-	else {
-		shared_ptr<DLList> tmp = this->next;
-		//идём по списку до тех пор, пока не дойдём до нужной позиции, или до хвоста
-		for (
-			int i = 2;
-			i < pos && tmp->next != nullptr;
-			i++, tmp = tmp->next
-			);
-		//Если следующий элемент не пустой, добавляем между двумя
-		if (tmp->next != nullptr) {
-			//Создаём новый	елемент
-			shared_ptr<DLList> newElem = make_shared<DLList>(s);
-			//В правый указатель прописываем правый элемент
-			newElem->next = tmp->next;
-			//В текущий элемент, который слева, прописываем наш новый
-			tmp->next = newElem;
-
-			newElem->prev = tmp;
-			newElem->next->prev = newElem;
-		}
-		else {
-			//Если пустой, просто добавляем в хвост
-			tmp->next = make_shared<DLList>(s);
-			tmp->next->prev = tmp;
-		}
-	}
-
-
+	shared_ptr<DLLElement> newElem = make_shared<DLLElement>(s, iData);
+	newElem->next = this->elem->next;
+	newElem->prev = this->elem;
+	this->elem->next->prev = newElem;
+	this->elem->next = newElem;
 }
 /// <summary>
 /// Удаление элемента из списка
@@ -177,12 +202,10 @@ void DLList::deleteElem(int choise)
 		throw runtime_error("Ошибка удаления.\nЧисло меньше 0");
 	}
 	//Если не существует ни одного элемента, выдаём ошибку.
-	if (this->data == nullptr) {
-		throw runtime_error("Ошибка удаления.\nОтсутствуют элементы в списке");
-	}
+	checkHaveElement();
 	//Если элемент только один, удаляем его
-	if (this->next == nullptr) {
-		this->data = nullptr;
+	if (this->elem->next == nullptr && this->elem->prev == nullptr) {
+		this->elem = nullptr;
 		return;
 	}
 	//Остался только случай, когда элементов несколько
@@ -191,65 +214,50 @@ void DLList::deleteElem(int choise)
 		//Удалить в хвосте
 	case 0: {
 		//Создаём временный указатель, 
-		//чтобы перейти к предпоследнему элементу
-		shared_ptr<DLList> tmp = this->next;
-		//Переходим к предпоследнему элементу
-		while (tmp->next->next != nullptr)
-		{
-			tmp = tmp->next;
-		}
-		//Удаляем указатель на предпоследний элемент
-		tmp->next->prev = nullptr;
-		//Удаляем указатель на последний элемент
-		tmp->next = nullptr;
 
+		//Переходим к предпоследнему элементу
+		this->goToTail();
+		this->stepToLeft();
+
+		//Удаляем указатель на предпоследний элемент
+		this->elem->next->prev = nullptr;
+		this->elem->next = nullptr;
+		//Удаляем указатель на последний элемент
 	}
 		  break;
 		  //Удалить в голове
 	case 1:
 		//Переписываем в голову данные из правого элемента
-		this->data = this->next->data;
-		//У удаляемого элемента удаляем указатель на голову
-		this->next->prev = nullptr;
-		//Если третий с головы элемент существует
-		if (this->next->next != nullptr) {
-			//Прописываем в него указатель на головной, поскольку второй удалится
-			this->next->next->prev = shared_ptr<DLList>(this);
-		}
-		//В головной прописываем указатель на следующий элемент, который был у второго
-		this->next = this->next->next;//Даже если он был равен nullptr
-
+		this->goToHead();
+		this->stepToRight();
+		this->elem->prev->next = nullptr;
+		this->elem->prev = nullptr;
 		break;
 	default:
-		//Создаём копию указателя из головы (на второй элемент)
-		shared_ptr<DLList> tmp = this->next;
-		//идём циклом до элемента, который нужно удалить
-		for (int i = 2; i < choise && tmp->next != nullptr; i++) {
-			tmp = tmp->next;
+		this->goToHead();
+		for (int i = 2; i < choise && this->elem->next != nullptr; i++) {
+			this->elem = this->elem->next;
 		}
-		//Если так получилось, что дошли до последнего, удаляем его
-		if (tmp->next == nullptr) {
+		if (this->elem->next == nullptr) {
 			this->deleteElem(0);
 			return;
 		}
-		//Если дошли не до последнего, переписываем указатели так, 
-		//чтобы избавиться от элемента внутри списка 
-		tmp->next->next->prev = tmp;
-		tmp->next = tmp->next->next;
+		this->elem->next->next->prev = elem;
+		elem->next = elem->next->next;
 		break;
 	}
 }
 
 int main() {
 	setlocale(LC_ALL, "Russian");
-	DLList eva("Ольга");
+	DLList eva("Ольга",1);
 	try {
-		eva.addToTail("Антон");
-		eva.addToTail("Иван");
-		eva.addToTail("Павел");
+		eva.addToTail("Антон",2);
+		eva.addToTail("Иван", 3);
+		eva.addToTail("Павел", 4);
 
 
-		eva.deleteElem(2);
+		eva.deleteElem(1);
 		cout << eva.getString();
 	}
 	catch (exception ex) {
