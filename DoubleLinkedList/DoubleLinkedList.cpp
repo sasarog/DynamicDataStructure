@@ -241,6 +241,7 @@ void DLList::deleteElem(int choise)
 		if (this->elem->next == nullptr) {
 			this->deleteElem(0);
 			return;
+
 		}
 		this->elem->next->next->prev = elem;
 		elem->next = elem->next->next;
