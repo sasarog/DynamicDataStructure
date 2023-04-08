@@ -182,7 +182,7 @@ string DLList::getString()
 void DLList::addInside(string s, int iData, int pos)
 {
 	this->goToHead();
-	for (int i = 1; i <= pos && this->elem->next != nullptr; i) {
+	for (int i = 1; i < pos && this->elem->next != nullptr; i++) {
 		this->elem = this->elem->next;
 	}
 	shared_ptr<DLLElement> newElem = make_shared<DLLElement>(s, iData);
